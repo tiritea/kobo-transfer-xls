@@ -57,8 +57,7 @@ def get_src_submissions_xml(xml_url):
 def submit_data(xml_sub, _uuid, original_uuid, xml_value_media_map):
     config = Config().dest
 
-    file_tuple = (_uuid, io.BytesIO(xml_sub))
-    files = {'xml_submission_file': file_tuple}
+    files = {'xml_submission_file': io.BytesIO(xml_sub)}
 
     # see if there is media to upload with it
     submission_attachments_path = os.path.join(
@@ -77,6 +76,8 @@ def submit_data(xml_sub, _uuid, original_uuid, xml_value_media_map):
     )
     session = requests.Session()
     res = session.send(res.prepare())
+    if (res.status_code // 100) != 2: # show response on fail for clues...
+        print(res.text)
     return res.status_code
 
 
