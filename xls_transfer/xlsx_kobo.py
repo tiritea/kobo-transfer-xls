@@ -130,6 +130,7 @@ def get_question_headers(headers):
         "_submission__submitted_by",
         "_submission___version__",
         "_submission__tags",
+        "meta/rootUuid",
     ]
     for header in headers:
         geopoint = is_geopoint_header(header)
@@ -309,8 +310,7 @@ def general_xls_to_xml(excel_file_path, submission_data, warnings=False):
         values_only=True,
     ):
         submission_xml = add_formhub_element(nsmap_dict, formhub_uuid)
-        # error will be raised if no $edited column is found
-        if not eval(  # all false or blank $edited submissions are being skipped
+        if "$edited" in headers and not eval(  # all false or blank $edited submissions are being skipped
             str(row[headers.index("$edited")])
         ):
             continue
