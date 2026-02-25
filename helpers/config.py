@@ -65,7 +65,7 @@ class Config(metaclass=Singleton):
             'api_v2': api_v2,
             'assets_url': assets_url,
             'asset_url': asset_url,
-            'submission_url': f'{api_v1}/submissions',
+            'submission_url': f'{data['kc_url']}/submission',
             'forms_url': f'{api_v1}/forms',
             'headers': {'Authorization': f"Token {data['token']}"},
             'params': {'format': 'json'},
