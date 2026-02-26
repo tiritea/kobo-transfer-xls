@@ -155,7 +155,11 @@ def transfer_submissions(all_submissions_xml, asset_data, quiet, regenerate):
         elif result == 202:
             msg = f'⚠️  {_uuid}'
         else:
-            msg = f'❌ {_uuid}'
+            deprecated_uuid = submission_xml.find('meta/deprecatedID')
+            if deprecated_uuid is not None:
+                msg = f'❌ {_uuid} (was {deprecated_uuid.text.replace("uuid:", "")})' # indicate which existing submission failed to update
+            else:
+                msg = f'❌ {_uuid}'
             log_failure(_uuid)
         if not quiet:
             print(msg)
