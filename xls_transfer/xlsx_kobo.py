@@ -7,6 +7,7 @@ from xml.etree import ElementTree as ET
 from transfer.media import rename_media_folder
 from transfer.xml import generate_new_instance_id
 
+from datetime import datetime
 
 def open_xlsx(excel_file_path):
     """opens xlsx, and returns workbook"""
@@ -238,7 +239,7 @@ def process_data_in_columns(submission_xml, col_name, cell_value):
             col_name.split("/"), str(cell_value), submission_xml
         )
     else:
-        if col_name in ["end", "start"]:
+        if col_name in ["end", "start"] and isinstance(cell_value, datetime):
             cell_value = cell_value.isoformat() if cell_value else ""
         create_xml_element_and_tag(submission_xml, col_name, str(cell_value))
 
