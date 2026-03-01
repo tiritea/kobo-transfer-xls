@@ -416,7 +416,11 @@ def create_repeat_group_xml_element(current_sheet_name, question_headers, header
 
         group_names = col_name.split("/")
         # split into array of header, starts creating repeat xml element from when repeat sheet name is mentioned
-        index_of_sheet_group = group_names.index(str(current_sheet_name))
+        #index_of_sheet_group = group_names.index(str(current_sheet_name))
+        # FIX - Excel sheet names are limited to 31 chars, so Kobo will truncate the names of additional repeat group sheets.
+        # This can break matching a (truncated?) current_sheet_name against the group_names list, so match on prefix instead.
+        # Only one should (always!) match, hence ...[0]
+        index_of_sheet_group = [i for i, x in enumerate(group_names) if x.startswith(current_sheet_name[:27])][0]
 
         if (
             repeat_sheet_xml_element is None
