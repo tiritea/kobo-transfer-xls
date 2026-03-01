@@ -132,6 +132,7 @@ def get_question_headers(headers):
         "_submission___version__",
         "_submission__tags",
         "meta/rootUuid",
+        "_submission_meta/rootUuid",
     ]
     for header in headers:
         geopoint = is_geopoint_header(header)
