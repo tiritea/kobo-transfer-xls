@@ -7,7 +7,7 @@ from xml.etree import ElementTree as ET
 from transfer.media import rename_media_folder
 from transfer.xml import generate_new_instance_id
 
-from datetime import datetime
+from datetime import datetime, time, date
 
 def open_xlsx(excel_file_path):
     """opens xlsx, and returns workbook"""
@@ -240,8 +240,16 @@ def process_data_in_columns(submission_xml, col_name, cell_value):
             col_name.split("/"), str(cell_value), submission_xml
         )
     else:
-        if col_name in ["end", "start"] and isinstance(cell_value, datetime):
-            cell_value = cell_value.isoformat() if cell_value else ""
+        """
+        Kobo exports dates as ISO-8601 strings, but editing text cells in Excel can inadvertently convert them into datetime cells if the string *looks* like a date.
+        So if the Excel datetime cell has a zero time component then assume it was originally an XLSForm *date* and drop the time.
+        Otherwise, convert the Excel datetime back into an ISO-8601 formatted string. Note: Excel datetimes do not store a timezone, so this is unrecoverable.
+        """
+        if isinstance(cell_value, datetime):
+            if cell_value.time() == time(): # 'zero time' equates to 00:00:00, or midnight; https://stackoverflow.com/a/1423713/3936065
+                cell_value = cell_value.date().isoformat()
+            else:
+                cell_value = cell_value.isoformat()
         create_xml_element_and_tag(submission_xml, col_name, str(cell_value))
 
     return all_empty
