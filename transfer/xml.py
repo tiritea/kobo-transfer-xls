@@ -144,6 +144,11 @@ def transfer_submissions(all_submissions_xml, asset_data, quiet, regenerate):
         submission_values = get_all_values_from_xml(submission_xml)
         xml_value_media_map = get_xml_value_media_mapping(submission_values)
 
+        # Uncomment the following to see the actual submission XML being sent, for debugging
+        """
+        ET.indent(submission_xml)
+        print("submission XML:\n",ET.tostring(submission_xml, encoding='unicode'))
+        """
         result = submit_data(
             ET.tostring(submission_xml),
             _uuid,
