@@ -23,7 +23,7 @@ Export submissions from your Kobo project's DATA tab with the following Download
 
 Expand the 'Advanced options' section and apply the additional settings:
 - 'Export *Select Many* questions as...' = 'Single column'
-- 'Include fields from all N versions' is **Enabled**.
+- 'Include fields from all N versions' is **Disabled**. This ensures you will only edit fields that actually exist in the currently deployed form.
 - 'Include groups in headers' is **Enabled**, with 'Group separator' = '/'.
 - 'Store date and number responses as text' is **Enabled**.
 - 'Include media URLs' is **Disabled**.
