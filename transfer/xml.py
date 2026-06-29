@@ -185,17 +185,13 @@ def log_failure(_uuid):
 def get_formhub_uuid():
     config = Config().dest
     res = requests.get(
-        url=config['forms_url'],
+        url=config['asset_url'],
         headers=config['headers'],
         params=config['params'],
     )
     if not res.status_code == 200:
         raise Exception('Something went wrong')
-    all_forms = res.json()
-    latest_form = [
-        f for f in all_forms if f['id_string'] == config['asset_uid']
-    ][0]
-    return latest_form['uuid']
+    return res.json()['deployment__uuid']
 
 
 def get_deployed_versions():
