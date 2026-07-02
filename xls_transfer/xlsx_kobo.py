@@ -504,11 +504,6 @@ def xml_from_repeat_sheets(submission_xml, workbook, submission_index):
                     index
                 )  # mantain relevant indexes for this submission for next sheet (where current sheet might be parent)
 
-            print("parent")
-            print(parent_indexes)
-            print("new)")
-            print(new_indexes)
-
             um = ET.ElementTree(submission_xml)
             um.write("./yo.xml")
             repeat_sheet_xml_element, index_of_sheet_group, parent_of_sheet_group = (
