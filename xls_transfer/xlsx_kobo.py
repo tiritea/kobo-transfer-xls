@@ -133,6 +133,8 @@ def get_question_headers(headers):
         "_submission__tags",
         "meta/rootUuid",
         "_submission_meta/rootUuid",
+        # the following are additional export column headers added by Ona (to ignore), which otherwise nicely matches Kobo's export 
+        "_version", "_duration", "_last_edited_by", "_xform_id",
     ]
     for header in headers:
         geopoint = is_geopoint_header(header)
