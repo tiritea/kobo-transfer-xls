@@ -7,6 +7,7 @@ import uuid
 from datetime import datetime
 from xml.etree import ElementTree as ET
 import mimetypes
+import time
 
 from .media import get_media, del_media
 from utils.text import get_valid_filename
@@ -80,9 +81,20 @@ def submit_data(xml_sub, _uuid, original_uuid, xml_value_media_map):
         headers=config['headers'],
     )
     session = requests.Session()
-    res = session.send(res.prepare())
-    if (res.status_code // 100) != 2: # show response on fail for clues...
-        print(res.text)
+    res_prep = res.prepare()
+    retry = 5 # max number of 503 retry attempts
+    wait = 1 # starting wait time (x2 each attempt)
+    while True: # keep trying if get 503 response
+        res = session.send(res_prep)
+        if (res.status_code == 503 and bool(retry)):
+            print(f'503 response from server - retrying in {wait} seconds...')
+            time.sleep(wait)
+            wait *= 2
+            retry -= 1
+            continue
+        elif (res.status_code // 100) != 2: # show response on fail for clues...
+            print(res.text)
+        break
     return res.status_code
 
 
@@ -120,7 +132,8 @@ def generate_new_instance_id() -> (str, str):
 
 def transfer_submissions(all_submissions_xml, asset_data, quiet, regenerate):
     results = []
-    for submission_xml in all_submissions_xml:
+    count = len(all_submissions_xml)
+    for i, submission_xml in enumerate(all_submissions_xml, start=1):
 
         # Use the same UUID so that duplicates are rejected
         original_uuid = submission_xml.find('meta/instanceID').text.replace(
@@ -161,15 +174,15 @@ def transfer_submissions(all_submissions_xml, asset_data, quiet, regenerate):
             xml_value_media_map,
         )
         if result == 201:
-            msg = f'✅ {_uuid}'
+            msg = f'✅ {_uuid} ({i}/{count})'
         elif result == 202:
-            msg = f'⚠️  {_uuid}'
+            msg = f'⚠️  {_uuid} ({i}/{count})'
         else:
             deprecated_uuid = submission_xml.find('meta/deprecatedID')
             if deprecated_uuid is not None:
-                msg = f'❌ {_uuid} (was {deprecated_uuid.text.replace("uuid:", "")})' # indicate which existing submission failed to update
+                msg = f'❌ {_uuid} ({i}/{count}, was {deprecated_uuid.text.replace("uuid:", "")})' # indicate which existing submission failed to update
             else:
-                msg = f'❌ {_uuid}'
+                msg = f'❌ {_uuid} ({i}/{count})'
             log_failure(_uuid)
         if not quiet:
             print(msg)
