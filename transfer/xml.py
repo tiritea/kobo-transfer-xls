@@ -82,12 +82,12 @@ def submit_data(xml_sub, _uuid, original_uuid, xml_value_media_map):
     )
     session = requests.Session()
     res_prep = res.prepare()
-    retry = 5 # max number of 503 retry attempts
+    retry = 5 # max number of retry attempts
     wait = 1 # starting wait time (x2 each attempt)
-    while True: # keep trying if get 503 response
+    while True: # keep trying if get 502/503/504 response
         res = session.send(res_prep)
-        if (res.status_code == 503 and bool(retry)):
-            print(f'503 response from server - retrying in {wait} seconds...')
+        if (res.status_code in [502, 503, 504] and bool(retry)):
+            print(f'{res.status_code} response from server - retrying in {wait} seconds...')
             time.sleep(wait)
             wait *= 2
             retry -= 1
