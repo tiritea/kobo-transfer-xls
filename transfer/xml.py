@@ -65,14 +65,20 @@ def submit_data(xml_sub, _uuid, original_uuid, xml_value_media_map):
     submission_attachments_path = os.path.join(
         Config.ATTACHMENTS_DIR, Config().src['asset_uid'], original_uuid, '*'
     )
+    print("looking for attachments in",submission_attachments_path)
     for file_path in glob.glob(submission_attachments_path):
         filename = os.path.basename(file_path)
         filename_value = xml_value_media_map.get(filename)
-        mime_type, _ = mimetypes.guess_type(file_path)
-        if mime_type is not None:
-            files[filename_value] = (filename_value, open(file_path, 'rb'), mime_type)
+        # check this file is actually referenced in the submission 
+        if filename_value is not None:
+            mime_type, _ = mimetypes.guess_type(file_path)
+            if mime_type is not None:
+                files[filename_value] = (filename_value, open(file_path, 'rb'), mime_type)
+            else:
+                files[filename_value] = (filename_value, open(file_path, 'rb'))
+            print("+ adding",filename)
         else:
-            files[filename_value] = (filename_value, open(file_path, 'rb'))
+            print("- ignoring",filename,"as not in submission XML")
 
     res = requests.Request(
         method='POST',
@@ -93,7 +99,7 @@ def submit_data(xml_sub, _uuid, original_uuid, xml_value_media_map):
             retry -= 1
             continue
         elif (res.status_code // 100) != 2: # show response on fail for clues...
-            print(res.text)
+            print(f'{res.status_code} response from server\n',res.text[:200]) # limit to 200 chars because some 500 errors return Kobo home page html...
         break
     return res.status_code
 

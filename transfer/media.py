@@ -18,6 +18,7 @@ def rename_media_folder(submission_data, uuid, row_num):
         new_attachments_path = os.path.join(
             Config.ATTACHMENTS_DIR, submission_data['asset_uid'], str(uuid)
         )
+        print("renaming",current_attachments_path,"to",new_attachments_path)
         try:
             # Move the folder to the new path
             shutil.move(current_attachments_path, new_attachments_path)
