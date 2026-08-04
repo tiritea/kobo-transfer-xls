@@ -466,6 +466,7 @@ def xml_from_repeat_sheets(submission_xml, workbook, submission_index):
     sheet_names = workbook.sheetnames
     parent_indexes = [] 
     for sheet_name in sheet_names[1:]:
+        #print("processing sheet for repeat group",sheet_name)
         new_indexes = []  #cleared every time its a new sheet.
         sheet = workbook[sheet_name]
         headers = [cell.value for cell in sheet[1]]
@@ -481,10 +482,11 @@ def xml_from_repeat_sheets(submission_xml, workbook, submission_index):
         if sheet.max_row >= 2:
             row = next(sheet.iter_rows(min_row=2, max_row=2, values_only=True))
             parent_table = row[parent_table_header]
-        
-        if parent_table == str(sheet_names[0]):
-                parent_is_first_sheet = True
-                parent_indexes = []
+
+        # Excel sheet names are limited to 31 chars, so match on prefix instead
+        if parent_table.startswith(str(sheet_names[0])[:27]):
+            parent_is_first_sheet = True
+            parent_indexes = []
 
         for row in sheet.iter_rows(min_row=2, values_only=True):
             index = str(row[index_header])
