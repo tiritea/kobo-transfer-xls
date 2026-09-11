@@ -14,7 +14,7 @@ Edit `config.json` with your Kobo project and account settings; add these to *bo
 - get `kc_url` from *FORM* -> *Collect data* -> *Android application* (eg https://kc.kobotoolbox.org)
 - get `kf_url` from any project page URL prefix (eg https://kf.kobotoolbox.org)
 - get the `token` from your *Account* -> *Account settings* - *Security* page. **Display** and then copy the **API Key** value
-- get the `asset_uid` from the project summary page URL (eg kf.kobotoolbox.org/#/forms/**a7d7KzP5YJ9d9fhdWyGNtJ**/summary)
+- get the `asset_uid` from the project summary page URL (eg kf.kobotoolbox.org/#/forms/**a7d7KzP5YJ9d9fhdWyGNtJ**/summary). Please note a new project must first be deployed before you can upload submissions against it.
 
 # Usage
 Export submissions from your Kobo project's DATA tab with the following Download settings:
@@ -29,7 +29,7 @@ Expand the 'Advanced options' section and apply the additional settings:
 - 'Include media URLs' is **Disabled**.
 - 'Select questions to be exported' is **Disabled**. That is, *all* fields are selected for export.
   
-Then **Export** your dataset. After exporting, load the resulting XLSX file into your favorite spreadsheet application and make your changes. But do not touch the `_uuid` or `meta/rootUuid` columns (or, indeed, any of the underscore-prefixed fields).
+Then **Export** your dataset from KoboToolbox. After exporting, load the resulting XLSX file into your favorite spreadsheet application and make your changes. But do not touch the `_uuid` or `meta/rootUuid` columns (or, indeed, any of the underscore-prefixed fields). If, however, you are using the tool to upload entirely *new* submissions from an existing XLSX spreadsheet - eg an XLSX exported from another product such as Ona - then you must remove any `_uuid` or `meta/rootUuid` column before running the tool (otherwise it will attempt to find existing submissions with those uuids in KoboToolbox to replace, and thus fail).
 
 **IMPORTANT** - REMOVE ANY ROWS (IE SUBMISSIONS) THAT YOU DO ***NOT*** WANT TO UPDATE. Otherwise, *all* rows - ie all the exported submissions - will be *re*submitted as an update of the existing submission, even if all the fields remain unchanged.
 
