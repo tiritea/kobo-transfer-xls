@@ -77,7 +77,12 @@ def add_meta_element(submission_xml, formatted_uuid):
 
     # if its #edited, create a new uuid, and  move the old one to the deprecatedID
     # if there is no uuid or uuid is blank, this means it's an initial submission. no deprecated element created, only new uuid (instanceID)
-    meta = create_xml_element_and_tag(None, "meta", None)
+
+    meta = submission_xml.find("meta")  # find() only searches immediate children, so a deeply nested meta isnt inadvertently detected 
+    if meta is None:  # add new meta group only if one hasn't already been created (eg for instanceName)
+        meta = create_xml_element_and_tag(None, "meta", None)
+        submission_xml.append(meta)
+        
     instanceId = create_xml_element_and_tag(meta, "instanceID", None)
 
     if (
@@ -89,8 +94,6 @@ def add_meta_element(submission_xml, formatted_uuid):
         create_xml_element_and_tag(meta, "deprecatedID", str(formatted_uuid))
         instanceId.text = str(generate_new_instance_id()[1])
         formatted_uuid = instanceId.text
-
-    submission_xml.append(meta)
 
     return formatted_uuid
 
